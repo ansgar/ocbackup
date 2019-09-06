@@ -1,0 +1,28 @@
+#!/bin/bash
+
+cd ~/.ocb || exit
+IFS=$'\t'
+read protocol host path < server
+while read user pass calendar
+do
+  mkdir $user
+	rm ${user}/${calendar}.ics
+	wget --auth-no-challenge \
+       --no-clobber \
+       --http-user=$user \
+       --http-password="${pass}" \
+       -O ${user}/${calendar}.ics \
+       "${protocol}://${host}/${path}/calendars/${user}/${calendar}?export"
+done < calendar
+
+while read user pass book
+do
+  mkdir $user
+	rm ${user}/${book}.vcf
+	wget --auth-no-challenge \
+       --no-clobber \
+       --http-user=$user \
+       --http-password="${pass}" \
+       -O ${user}/${book}.vcf \
+       "${protocol}://${host}/${path}/addressbooks/users/${user}/${book}/?export"
+done < contact
